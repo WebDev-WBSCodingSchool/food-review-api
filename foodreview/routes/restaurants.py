@@ -10,20 +10,36 @@ def get_restaurants():
     try:
         conn = get_connection()
         cur = conn.cursor()
-        # Fetch all restaurants
-        cur.execute("SELECT id, name, description, owner_id FROM restaurants")
+        # Single query with LEFT JOIN and GROUP BY
+        cur.execute("""
+            SELECT 
+                r.id,
+                r.name,
+                r.description,
+                r.owner_id,
+                COUNT(rv.id) AS total_reviews,
+                COALESCE(ROUND(AVG(rv.rating)::numeric, 2), 0) AS average_rating
+            FROM restaurants r
+            LEFT JOIN reviews rv ON rv.restaurant_id = r.id
+            GROUP BY r.id, r.name, r.description, r.owner_id
+        """)
         rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        # Convert result to JSON-friendly format
         restaurants = []
+        base_url = request.host_url.rstrip('/')
         for row in rows:
+            restaurant_id = row[0]
             restaurants.append({
-                'id': row[0],
+                'id': restaurant_id,
                 'name': row[1],
                 'description': row[2],
-                'owner_id': row[3]
+                'owner_id': row[3],
+                'total_reviews': row[4],
+                'average_rating': float(row[5]),
+                'reviews_url': f"{base_url}/restaurants/{restaurant_id}/reviews"
             })
+            restaurants.sort(key=lambda x: x['id'])
+        cur.close()
+        conn.close()
         return jsonify(restaurants), 200
     except Exception as e:
         return jsonify({'error': 'Server error', 'details': str(e)}), 500
