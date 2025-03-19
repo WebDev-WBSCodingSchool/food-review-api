@@ -4,6 +4,30 @@ from ..db import get_connection
 
 restaurants_bp = Blueprint('restaurants', __name__, url_prefix='/restaurants')
 
+@restaurants_bp.get('/')
+@require_auth
+def get_restaurants():
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        # Fetch all restaurants
+        cur.execute("SELECT id, name, description, owner_id FROM restaurants")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        # Convert result to JSON-friendly format
+        restaurants = []
+        for row in rows:
+            restaurants.append({
+                'id': row[0],
+                'name': row[1],
+                'description': row[2],
+                'owner_id': row[3]
+            })
+        return jsonify(restaurants), 200
+    except Exception as e:
+        return jsonify({'error': 'Server error', 'details': str(e)}), 500
+
 @restaurants_bp.post('/')
 @require_auth
 def create():
