@@ -189,4 +189,4 @@ Response:
 
 This project is not secure for production use — it's designed for learning purposes.
 
-Make sure your PostgreSQL DB is set up and the `PG_URI` env variable is correctly configured.
+Make sure your PostgreSQL DB is set up and the `PG_URI` env variable is correctly configured. A `create-database.sql` file is provided to create the relations and seed some sample data.
