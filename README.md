@@ -10,10 +10,12 @@ This project demonstrates basic user authentication flow and restaurant/review m
 ## 🔧 Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone git@github.com:WebDev-WBSCodingSchool/food-review-api.git
-   cd food-review-api
-   ```
+
+```bash
+git clone git@github.com:WebDev-WBSCodingSchool/food-review-api.git
+cd food-review-api
+```
+
 2. **Create and activate a virtual environment**
 
 macOS/Linux
